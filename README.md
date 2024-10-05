@@ -6,6 +6,8 @@ The utility does not require Unity3D or any 3d engines or modeling software.
 The software was designed and created by Ultimationzzz and uses SharpGTLF
 https://github.com/vpenades/SharpGLTF
 
+The sofware will work under either windows or linux.
+
 ### Requirements
 .Net 6.0 or above is required to run / build the project and can be downloaded from
 https://dotnet.microsoft.com/en-us/download
@@ -19,6 +21,7 @@ or via command line
 ```VRoidShaper.exe <input vrm file> <optional reference vrm>```
 
 You can use a different reference model by specifying the 2nd argument.
+
 
 
 ### License
