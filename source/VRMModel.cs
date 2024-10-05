@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using SharpGLTF.Memory;
 using SharpGLTF.Schema2;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace VRoidShaper
 {
