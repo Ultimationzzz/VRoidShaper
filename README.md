@@ -6,12 +6,12 @@ The utility does not require Unity3D or any 3d engines or modeling software.
 The software was designed and created by Ultimationzzz and uses SharpGTLF
 https://github.com/vpenades/SharpGLTF
 
-# Requirements
+### Requirements
 .Net 6.0 or above is required to run / build the project and can be downloaded from
 https://dotnet.microsoft.com/en-us/download
 
 
-# Usage
+### Usage
 Simply drag your VRM exported by VRoid onto the application to add the extra blendshapes.
 
 or via command line
@@ -21,6 +21,6 @@ or via command line
 You can use a different reference model by specifying the 2nd argument.
 
 
-# License
+### License
 The software is open source and under the GNU-3 license, You are free to use the code in your own projects, remember to include credits.
 
