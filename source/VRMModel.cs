@@ -71,18 +71,20 @@ namespace VRoidShaper
         {
             if (Model == null || Reference == null)
                 return false;
-            var face1 = Model.LogicalMeshes.FirstOrDefault(x => x.Name == "Face");
-            var face2 = Reference.LogicalMeshes.FirstOrDefault(x => x.Name == "Face");
+            var face1 = Model.LogicalNodes.FirstOrDefault(x => x.Name == "Face");
+            var face2 = Reference.LogicalNodes.FirstOrDefault(x => x.Name == "Face");
             if (face1 == null || face2 == null) return false;
-            if (face1.Primitives.Count != face2.Primitives.Count) return false;
-            for (int i = 0; i < face2.Primitives.Count; i++)
+            var mesh1 = face1.Mesh;
+            var mesh2 = face2.Mesh;
+            if (mesh1.Primitives.Count != mesh2.Primitives.Count) return false;
+            for (int i = 0; i < mesh2.Primitives.Count; i++)
             {
-                if (!face1.Primitives[i].VertexAccessors.ContainsKey("POSITION"))
+                if (!mesh1.Primitives[i].VertexAccessors.ContainsKey("POSITION"))
                     return false;
-                if (!face2.Primitives[i].VertexAccessors.ContainsKey("POSITION"))
+                if (!mesh2.Primitives[i].VertexAccessors.ContainsKey("POSITION"))
                     return false;
-                var count = face1.Primitives[i].VertexAccessors["POSITION"].Count;
-                if (count != face2.Primitives[i].VertexAccessors["POSITION"].Count)
+                var count = mesh1.Primitives[i].VertexAccessors["POSITION"].Count;
+                if (count != mesh2.Primitives[i].VertexAccessors["POSITION"].Count)
                 {
                     return false;
                 }
@@ -92,15 +94,15 @@ namespace VRoidShaper
         }
         public void AddBlendShapes()
         {
-            var modelFace = Model.LogicalMeshes.First(x => x.Name == "Face");
-            var refFace = Reference.LogicalMeshes.First(x => x.Name == "Face");
+            var modelFace = Model.LogicalNodes.First(x => x.Name == "Face");
+            var refFace = Reference.LogicalNodes.First(x => x.Name == "Face");
 
-            var blendShapes = GetBlendShapes(refFace);
+            var blendShapes = GetBlendShapes(refFace.Mesh);
             foreach (var bs in blendShapes)
             {
-                if (!HasShape(bs.ShapeName, modelFace.Primitives[bs.PrimitiveIdx]))
+                if (!HasShape(bs.ShapeName, modelFace.Mesh.Primitives[bs.PrimitiveIdx]))
                 {
-                    var newIdx = modelFace.Primitives[bs.PrimitiveIdx].MorphTargetsCount;
+                    var newIdx = modelFace.Mesh.Primitives[bs.PrimitiveIdx].MorphTargetsCount;
                     var morph = bs.Primitive.GetMorphTargetAccessors(bs.ShapeIdx);
                     if(morph == null) continue;
                     var newMorphs = new Dictionary<string, Accessor>();
@@ -116,8 +118,8 @@ namespace VRoidShaper
                         newAccessor.SetVertexData(mem);
                         newMorphs.Add(d.Key, newAccessor);
                     }
-                    modelFace.Primitives[bs.PrimitiveIdx].SetMorphTargetAccessors(newIdx, newMorphs);
-                    modelFace.Primitives[bs.PrimitiveIdx]?.Extras["targetNames"]?.AsArray().Add(bs.ShapeName);
+                    modelFace.Mesh.Primitives[bs.PrimitiveIdx].SetMorphTargetAccessors(newIdx, newMorphs);
+                    modelFace.Mesh.Primitives[bs.PrimitiveIdx]?.Extras["targetNames"]?.AsArray().Add(bs.ShapeName);
                     foreach (var n in Model.LogicalMeshes)
                     {
                         n.Extras?["targetNames"]?.AsArray().Add(bs.ShapeName);

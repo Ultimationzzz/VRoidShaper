@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VRoidShaper": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\Ultimation\\Desktop\\test\\STRAIGHTFROMVROID.vrm"
+    }
+  }
+}
