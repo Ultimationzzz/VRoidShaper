@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using SharpGLTF.IO;
 using SharpGLTF.Memory;
 using SharpGLTF.Schema2;
 
@@ -23,8 +26,10 @@ namespace VRoidShaper
             {
                 try
                 {
+                    ExtensionsFactory.RegisterExtension<ModelRoot,VrmNode>("VRM",new Func<ModelRoot,VrmNode>(root => new VrmNode(root)));
                     Reference=ModelRoot.Load(ReferenceFile);
                     Model = ModelRoot.Load(ModelFile);
+                  
                 }
                 catch (Exception)
                 {
@@ -34,6 +39,47 @@ namespace VRoidShaper
 
             return true;
         }
+
+        public void AddShapeProxies()
+        {
+            var modelJson = Model.Extensions.OfType<VrmNode>().FirstOrDefault();
+            if (modelJson != null)
+            {
+                var shapes = modelJson.GetBlendShapeList();
+
+
+                var mesh = Model.LogicalMeshes.FirstOrDefault(x => x.Name.Contains("Face"));
+                if (mesh != null)
+                {
+                    var names = mesh.Primitives[0].Extras["targetNames"].AsArray().Select(x => x.GetValue<string>())
+                        .ToArray();
+                    for (int shapeIdx = 0; shapeIdx < names.Length; shapeIdx++)
+                    {
+                        if (names[shapeIdx].StartsWith("--"))
+                            continue;
+                        var shapeName = names[shapeIdx];
+
+
+                        var group = new VrmBlendShapeGroup()
+                        {
+                            name = shapeName,
+                            binds = new List<VrmBind>(),
+                            materialValues = new List<object>(),
+                            presetName = shapeName
+                        };
+                        group.binds.Add(new VrmBind()
+                        {
+                            mesh = mesh.LogicalIndex,
+                            index = shapeIdx,
+                            weight = 100.0f
+                        });
+                        shapes.blendShapeGroups.Add(group);
+                    }
+                }
+                modelJson.SetBlendShapeMaster(shapes);
+            }
+        }
+
         static bool HasShape(string name, MeshPrimitive p)
         {
             if (p.Extras == null || p.Extras["targetNames"] == null)
@@ -53,6 +99,9 @@ namespace VRoidShaper
                     var names = p.Extras["targetNames"].AsArray().Select(x => x.GetValue<string>()).ToList();
                     for (int i = 0; i < p.MorphTargetsCount; i++)
                     {
+                        if (names[i].StartsWith("--"))
+                            continue;
+
                         res.Add(new BlendShape()
                         {
                             Primitive = p,

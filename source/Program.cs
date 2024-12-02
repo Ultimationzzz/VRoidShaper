@@ -17,8 +17,7 @@
             if (args.Length > 1)
             {
                 referenceVrm = args[1];
-            }
-
+            } 
             if (!File.Exists(referenceVrm))
             {
                 Console.WriteLine("Invalid reference vrm file");
@@ -44,7 +43,17 @@
                     return;
                 }
 
-                modelFactory.AddBlendShapes();
+                Console.WriteLine("Would you like to add ARKit Blendshapes?");
+                if (Console.ReadKey(false).Key == ConsoleKey.Y)
+                {
+                    modelFactory.AddBlendShapes();
+                }
+                Console.WriteLine("Would you like to add Blendshape Clip proxies?");
+                if (Console.ReadKey(false).Key == ConsoleKey.Y)
+                {
+                    modelFactory.AddShapeProxies();
+                }
+
 
                 var outDir = Path.GetDirectoryName(args[0]);
                 var outFile = Path.Combine(outDir, Path.GetFileNameWithoutExtension(args[0]) + "_ARKit.vrm");

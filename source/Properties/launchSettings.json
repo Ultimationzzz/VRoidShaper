@@ -2,7 +2,7 @@
   "profiles": {
     "VRoidShaper": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Ultimation\\Desktop\\test\\STRAIGHTFROMVROID.vrm"
+      "commandLineArgs": "Astrid_ARKit_edited.vrm"
     }
   }
 }
